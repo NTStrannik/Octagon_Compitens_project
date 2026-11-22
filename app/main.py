@@ -1,23 +1,36 @@
-from app.db.db import SessionLocal
-from app.db.crud import get_categories
+from contextlib import asynccontextmanager
 
-# Открываем сессию
-db = SessionLocal()
+from fastapi import FastAPI
+from sqlalchemy import text
 
-try:
-    # Получаем категории
-    categories = get_categories(db)
+from app.api import books, categories
+from app.db.db import engine
 
-    # Выводим категории и книги
-    for category in categories:
-        print(f"\nКатегория: {category.title}")
 
-        for book in category.books:
-            print(f"  Название: {book.title}")
-            print(f"  Описание: {book.description}")
-            print(f"  Цена: {book.price} руб.")
-            print(f"  Ссылка: {book.url}")
-            print()
+# Проверка подключения к БД при запуске
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    with engine.connect() as conn:
+        conn.execute(text("SELECT 1"))
 
-finally:
-    db.close()
+    yield
+
+
+# Создание приложения
+app = FastAPI(
+    title="Books API",
+    description="API для работы с книгами и категориями",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+
+# Подключение маршрутов
+app.include_router(books.router)
+app.include_router(categories.router)
+
+
+# Проверка работоспособности API
+@app.get("/health", tags=["Health"])
+def health():
+    return {"status": "ok"}

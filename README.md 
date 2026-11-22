@@ -1,0 +1,32 @@
+## Запуск API
+
+1. Активировать виртуальное окружение:
+
+   source venv/bin/activate
+
+2. Запустить PostgreSQL:
+
+   service postgresql start
+
+3. Запустить API:
+
+   uvicorn app.main:app --reload
+
+4. Открыть документацию:
+
+   http://127.0.0.1:8000/docs
+
+## Возможности API
+
+- CRUD для книг.
+- CRUD для категорий.
+- Фильтрация книг по категории.
+- Проверка работоспособности через /health.
+
+## Технологии
+
+- Python
+- FastAPI
+- PostgreSQL
+- SQLAlchemy
+- Pydantic

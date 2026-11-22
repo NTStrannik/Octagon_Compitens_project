@@ -34,3 +34,12 @@ SessionLocal = sessionmaker(
 
 # Общая база для моделей
 Base = declarative_base()
+
+# Получение сессии для API
+def get_db():
+    db = SessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()
