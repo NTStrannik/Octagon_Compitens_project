@@ -77,12 +77,6 @@ def delete_category(category_id: int, db: Session = Depends(get_db)):
             detail="Категория не найдена"
         )
 
-    if category.books:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Нельзя удалить категорию, к которой привязаны книги"
-        )
-
     crud.delete_category(db, category_id)
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
